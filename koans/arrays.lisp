@@ -49,16 +49,16 @@
 (define-test adjustable-array
   ;; The size of an array does not need to be constant.
   (let ((x (make-array '(2 2) :initial-element 5 :adjustable t)))
-    (assert-equal ____ (aref x 1 0))
-    (assert-equal ____ (array-dimensions x))
+    (assert-equal 5 (aref x 1 0))
+    (assert-equal '(2 2) (array-dimensions x))
     (adjust-array x '(3 4))
-    (assert-equal ____ (array-dimensions x))))
+    (assert-equal '(3 4) (array-dimensions x))))
 
 (define-test make-array-from-list
   ;; One can create arrays with initial contents.
   (let ((x (make-array '(4) :initial-contents '(:one :two :three :four))))
-    (assert-equal ____ (array-dimensions x))
-    (assert-equal ____ (aref x 0))))
+    (assert-equal '(4) (array-dimensions x))
+    (assert-equal :one (aref x 0))))
 
 (define-test row-major-index
   ;; Row major indexing is a way to access elements with a single integer,
@@ -66,7 +66,7 @@
   (let ((my-array (make-array '(2 2 2 2))))
     (dotimes (i (* 2 2 2 2))
       (setf (row-major-aref my-array i) i))
-    (assert-equal ____ (aref my-array 0 0 0 0))
-    (assert-equal ____ (aref my-array 0 0 1 0))
-    (assert-equal ____ (aref my-array 0 1 0 0))
-    (assert-equal ____ (aref my-array 1 1 1 1))))
+    (assert-equal 0 (aref my-array 0 0 0 0))
+    (assert-equal 2 (aref my-array 0 0 1 0))
+    (assert-equal 4 (aref my-array 0 1 0 0))
+    (assert-equal 15 (aref my-array 1 1 1 1))))
