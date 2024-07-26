@@ -100,30 +100,30 @@
 
 (define-test funky-parameters
   (assert-equal '(1 nil 1 nil nil) (function-with-funky-parameters 1))
-  (assert-equal '(1 2 1 nil '()) (function-with-funky-parameters 1 :b 2))
-  (assert-equal '(nil 2 3 t 1) (function-with-funky-parameters 1 :b 2 :c 3))
-  (assert-equal '(1 2 3 t nil) (function-with-funky-parameters 1 :c 3 :b 2)))
+  (assert-equal '(1 2 1 nil (:b 2)) (function-with-funky-parameters 1 :b 2))
+  (assert-equal '(1 2 3 t (:b 2 :c 3)) (function-with-funky-parameters 1 :b 2 :c 3))
+  (assert-equal '(1 2 3 t (:c 3 :b 2)) (function-with-funky-parameters 1 :c 3 :b 2)))
 
 (define-test lambda
   ;; A list form starting with the symbol LAMBDA denotes an anonymous function.
   ;; It is possible to call that function immediately or to store it for later
   ;; use.
   (let ((my-function (lambda (a b) (* a b))))
-    (assert-equal ____ (funcall my-function 11 9)))
+    (assert-equal 99 (funcall my-function 11 9)))
   ;; A LAMBDA form is allowed to take the place of a function name.
-  (assert-equal ____ ((lambda (a b) (+ a b)) 10 9))
+  (assert-equal 19 ((lambda (a b) (+ a b)) 10 9))
   (let ((functions (list (lambda (a b) (+ a b))
                          (lambda (a b) (- a b))
                          (lambda (a b) (* a b))
                          (lambda (a b) (/ a b)))))
-    (assert-equal ____ (funcall (first functions) 2 33))
-    (assert-equal ____ (funcall (second functions) 2 33))
-    (assert-equal ____ (funcall (third functions) 2 33))
-    (assert-equal ____ (funcall (fourth functions) 2 33))))
+    (assert-equal 35 (funcall (first functions) 2 33))
+    (assert-equal -31 (funcall (second functions) 2 33))
+    (assert-equal 66 (funcall (third functions) 2 33))
+    (assert-equal 2/33 (funcall (fourth functions) 2 33))))
 
 (define-test lambda-with-optional-parameters
-  (assert-equal ____ ((lambda (a &optional (b 100)) (+ a b)) 10 9))
-  (assert-equal ____ ((lambda (a &optional (b 100)) (+ a b)) 10)))
+  (assert-equal 19 ((lambda (a &optional (b 100)) (+ a b)) 10 9))
+  (assert-equal 110 ((lambda (a &optional (b 100)) (+ a b)) 10)))
 
 (defun make-adder (x)
   ;; MAKE-ADDER will create a function that closes over the parameter X.
@@ -135,8 +135,8 @@
   (let ((adder-100 (make-adder 100))
         (adder-500 (make-adder 500)))
     ;; ADD-100 and ADD-500 now close over different values.
-    (assert-equal ____ (funcall adder-100 3))
-    (assert-equal ____ (funcall adder-500 3))))
+    (assert-equal 103 (funcall adder-100 3))
+    (assert-equal 503 (funcall adder-500 3))))
 
 (defun make-reader-and-writer (x)
   ;; Both returned functions will refer to the same place.
@@ -149,32 +149,32 @@
   ;; that is its second argument.
   (destructuring-bind (reader-1 writer-1) (make-reader-and-writer 1)
     (destructuring-bind (reader-2 writer-2) (make-reader-and-writer :one)
-      (assert-equal ____ (funcall reader-1))
+      (assert-equal 1 (funcall reader-1))
       (funcall writer-1 0)
-      (assert-equal ____ (funcall reader-1))
+      (assert-equal 0 (funcall reader-1))
       ;; The two different function pairs refer to different places.
-      (assert-equal ____ (funcall reader-2))
+      (assert-equal :one (funcall reader-2))
       (funcall writer-2 :zero)
-      (assert-equal ____ (funcall reader-2)))))
+      (assert-equal :zero (funcall reader-2)))))
 
 (define-test apply
   ;; The function APPLY applies a function to a list of arguments.
   (let ((function (lambda (x y z) (+ x y z))))
-    (assert-equal ____ (apply function '(100 20 3))))
+    (assert-equal 123 (apply function '(100 20 3))))
   ;; FUNCTION is a special operator that retrieves function objects, defined
   ;; both globally and locally. #'X is syntax sugar for (FUNCTION X).
-  (assert-equal ____ (apply (function +) '(1 2)))
-  (assert-equal ____ (apply #'- '(1 2)))
+  (assert-equal 3 (apply (function +) '(1 2)))
+  (assert-equal -1 (apply #'- '(1 2)))
   ;; Only the last argument to APPLY must be a list.
-  (assert-equal ____ (apply #'+ 1 2 '(3)))
-  (assert-equal ____ (apply #'max 1 2 3 4 '())))
+  (assert-equal 6 (apply #'+ 1 2 '(3)))
+  (assert-equal 4 (apply #'max 1 2 3 4 '())))
 
 (define-test funcall
   ;; The function FUNCALL calls a function with arguments, not expecting a final
   ;; list of arguments.
   (let ((function (lambda (x y z) (+ x y z))))
-    (assert-equal ____ (funcall function 300 20 1)))
-  (assert-equal ____ (funcall (function +) 1 2))
-  (assert-equal ____ (funcall #'- 1 2))
-  (assert-equal ____ (funcall #'+ 1 2 3))
-  (assert-equal ____ (funcall #'max 1 2 3 4)))
+    (assert-equal 321 (funcall function 300 20 1)))
+  (assert-equal 3 (funcall (function +) 1 2))
+  (assert-equal -1 (funcall #'- 1 2))
+  (assert-equal 6 (funcall #'+ 1 2 3))
+  (assert-equal 4 (funcall #'max 1 2 3 4)))

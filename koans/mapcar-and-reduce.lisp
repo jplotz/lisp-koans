@@ -19,11 +19,11 @@
     ;; Inside MAPCAR, the function 1+ will be applied to each element of NUMBERS.
     ;; A new list will be collected from the results.
     (assert-equal '(2 3 4 5 6 7) (mapcar #'1+ numbers))
-    (assert-equal ____ (mapcar #'- numbers))
-    (assert-equal ____ (mapcar #'list numbers))
-    (assert-equal ____ (mapcar #'evenp numbers))
-    (assert-equal ____ (mapcar #'numberp numbers))
-    (assert-equal ____ (mapcar #'stringp numbers))
+    (assert-equal '(-1 -2 -3 -4 -5 -6) (mapcar #'- numbers))
+    (assert-equal '((1) (2) (3) (4) (5) (6)) (mapcar #'list numbers))
+    (assert-equal '(nil t nil t nil t) (mapcar #'evenp numbers))
+    (assert-equal '(t t t t t t) (mapcar #'numberp numbers))
+    (assert-equal '(nil nil nil nil nil nil) (mapcar #'stringp numbers))
     ;; MAPCAR can work on multiple lists. The function will receive one argument
     ;; from each list.
     (let ((other-numbers '(4 8 15 16 23 42)))
